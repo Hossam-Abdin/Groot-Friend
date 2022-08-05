@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./styles.css">
+    <title>Groot friend</title>
+</head>
+<body>
+    <div class="groot-settings">
+        <h1>Set up your Groot Friend 🗣</h1>
+        
+        <select name="voice" id="voices">
+            <option value="">Select a Voice</option>
+        </select>
+
+        <label for="rate">Rate:</label>
+        <input name="rate" type="range" min="0" max="3" value="1" step="0.1">
+
+        <label for="pitch">Pitch:</label>
+        <input name="pitch" type="range" min="0" max="2" step="0.1">
+    </div>
+
+    <button>Make Groot talk</button>
+</body>
+
+<script>
+    const msg = new SpeechSynthesisUtterance();
+    let voices = [];
+    const voicesDropdown = document.querySelector('[name="voice"]');
+    const options = document.querySelectorAll('[type="range"], [name="text"]');
+    const speakButton = document.querySelector('button');
+
+    msg.text = 'I am groot!';
+
+    function populateVoices() {
+        voices = this.getVoices();
+        voicesDropdown.innerHTML = voices
+            .filter(voice => voice.lang.includes('en'))
+            .map(voice => `<option value="${voice.name}">${voice.name} (${voice.lang})</option>`)
+            .join('');
+    }
+
+    function setOption() {
+        msg[this.name] = this.value;
+    }
+    
+    function speak() {
+        console.log(msg);
+        speechSynthesis.speak(msg);
+    }
+    
+    function setVoice() {
+        msg.voice = voices.find(voice => voice.name === this.value);
+        console.log(msg.voice);
+    }
+
+    speechSynthesis.addEventListener('voiceschanged', populateVoices);
+    voicesDropdown.addEventListener('change', setVoice);
+    options.forEach(option => option.addEventListener('change', setOption));
+    speakButton.addEventListener('click', speak);
+
+</script>
+</html>
